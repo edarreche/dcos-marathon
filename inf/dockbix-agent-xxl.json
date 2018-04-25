@@ -1,0 +1,80 @@
+{
+  "id": "/inf/dockbix-agent-xxl",
+  "cmd": null,
+  "cpus": 0.1,
+  "mem": 512,
+  "disk": 0,
+  "instances": 0,
+  "constraints": [
+    [
+      "hostname",
+      "LIKE",
+      "192.168.74.28"
+    ]
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/etc/localtime",
+        "hostPath": "/etc/localtime",
+        "mode": "RO"
+      },
+      {
+        "containerPath": "/rootfs",
+        "hostPath": "/",
+        "mode": "RO"
+      },
+      {
+        "containerPath": "/var/run",
+        "hostPath": "/var/run",
+        "mode": "RO"
+      }
+    ],
+    "docker": {
+      "image": "monitoringartist/dockbix-agent-xxl-limited:latest",
+      "network": "HOST",
+      "privileged": true,
+      "parameters": [
+        {
+          "key": "userns",
+          "value": "host"
+        }
+      ],
+      "forcePullImage": false
+    }
+  },
+  "env": {
+    "ZA_ListenPort": "10051",
+    "ZA_LogRemoteCommands": "1",
+    "ZA_Timeout": "30",
+    "ZA_StartAgents": "5",
+    "ZA_ServerActive": "marathon-lb.inf.marathon-bsa.mesos:20078",
+    "ZA_DebugLevel": "5",
+    "ZA_LogType": "console",
+    "ZA_ListenIP": "0.0.0.0",
+    "ZA_Server": "192.168.74.23",
+    "ZA_Hostname": "lapp-dvde004"
+  },
+  "healthChecks": [
+    {
+      "protocol": "TCP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3,
+      "ignoreHttp1xx": false
+    }
+  ],
+  "labels": {
+    "HAPROXY_GROUP": "external"
+  },
+  "portDefinitions": [
+    {
+      "port": 10001,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ]
+}

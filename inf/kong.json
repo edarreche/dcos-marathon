@@ -1,0 +1,116 @@
+{
+  "id": "/inf/kong",
+  "cmd": null,
+  "cpus": 0.1,
+  "mem": 256,
+  "disk": 0,
+  "instances": 1,
+  "constraints": [
+    [
+      "hostname",
+      "UNLIKE",
+      "192.168.74.29"
+    ]
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [],
+    "docker": {
+      "image": "kong:0.9.1",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "hostPort": 0,
+          "servicePort": 20045,
+          "protocol": "tcp",
+          "name": "http",
+          "labels": {}
+        },
+        {
+          "containerPort": 8443,
+          "hostPort": 0,
+          "servicePort": 20046,
+          "protocol": "tcp",
+          "name": "https",
+          "labels": {}
+        },
+        {
+          "containerPort": 8001,
+          "hostPort": 0,
+          "servicePort": 20051,
+          "protocol": "tcp",
+          "name": "admin",
+          "labels": {}
+        },
+        {
+          "containerPort": 7946,
+          "hostPort": 7946,
+          "servicePort": 20052,
+          "protocol": "tcp",
+          "name": "cl-listen",
+          "labels": {}
+        },
+        {
+          "containerPort": 7373,
+          "hostPort": 7373,
+          "servicePort": 20053,
+          "protocol": "tcp",
+          "name": "cl-listen-rpc",
+          "labels": {}
+        }
+      ],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": false
+    }
+  },
+  "env": {
+    "KONG_DATABASE": "postgres",
+    "KONG_PG_HOST": "marathon-lb.inf.marathon-bsa.mesos",
+    "KONG_PG_PORT": "20060",
+    "KONG_LOG_LEVEL": "debug"
+  },
+  "healthChecks": [
+    {
+      "path": "/",
+      "protocol": "HTTP",
+      "portIndex": 2,
+      "gracePeriodSeconds": 10,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3,
+      "ignoreHttp1xx": false
+    }
+  ],
+  "labels": {
+    "HAPROXY_GROUP": "external"
+  },
+  "portDefinitions": [
+    {
+      "port": 20045,
+      "protocol": "tcp",
+      "labels": {}
+    },
+    {
+      "port": 20046,
+      "protocol": "tcp",
+      "labels": {}
+    },
+    {
+      "port": 20051,
+      "protocol": "tcp",
+      "labels": {}
+    },
+    {
+      "port": 20052,
+      "protocol": "tcp",
+      "labels": {}
+    },
+    {
+      "port": 20053,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ]
+}

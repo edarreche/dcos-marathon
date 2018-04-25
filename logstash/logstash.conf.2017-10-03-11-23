@@ -1,0 +1,40 @@
+input { 
+  tcp {
+    port => "9400"
+  }
+}
+
+filter {
+  if [message]=~ "tag=logspout" {
+     grok {
+      match => { "message" => "\<%{NUMBER:a}\>%{NUMBER:b} %{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:%{SECOND}Z %{HOSTNAME:c} %{HOSTNAME:d} %{NUMBER:e} - \[tag\=logspout\] %{GREEDYDATA:mssg}" }
+     }
+     mutate { add_tag => "logspout" }
+  } else {
+    if [message] =~ "x-kong" {
+      json{
+        source => "message"
+        target => "msg"
+      }
+      json{
+        source => "msg"
+      }
+      mutate { add_tag => "Kong" }
+    } else {
+      kv { target => "msgms"
+	   field_split => ","
+           value_split => ":"
+           include_brackets => false
+           trim => "\"\{\}" 
+           trimkey => "\{\}\"" }
+      mutate { add_tag => "Microservice" }
+    }
+  }
+}
+output {
+ elasticsearch {
+  hosts => ["marathon-lb.inf.marathon-bsa.mesos:20041"]
+  index => "logstash-%{+YYYY.MM.dd}"
+ }
+ stdout { codec => rubydebug }
+}

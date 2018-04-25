@@ -1,0 +1,59 @@
+{
+  "id": "/inf/logstash",
+  "cmd": null,
+  "cpus": 0.4,
+  "mem": 512,
+  "disk": 0,
+  "instances": 1,
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/config-dir/",
+        "hostPath": "/data-bsa/logstash",
+        "mode": "RW"
+      }
+    ],
+    "docker": {
+      "image": "logstash:latest",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 9400,
+          "hostPort": 0,
+          "servicePort": 20043,
+          "protocol": "tcp",
+          "labels": {}
+        }
+      ],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": false
+    }
+  },
+  "healthChecks": [
+    {
+      "protocol": "TCP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 30,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3,
+      "ignoreHttp1xx": false
+    }
+  ],
+  "labels": {
+    "HAPROXY_GROUP": "external"
+  },
+  "portDefinitions": [
+    {
+      "port": 20043,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ],
+  "args": [
+    "-f",
+    "/config-dir/logstash.conf"
+  ]
+}

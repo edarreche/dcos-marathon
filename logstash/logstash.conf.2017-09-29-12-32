@@ -1,0 +1,33 @@
+input { 
+  tcp {
+    port => "9400"
+  }
+}
+filter {
+  if [message] =~ "x-kong" {
+    json{
+      source => "message"
+      target => "msg"
+    }
+    json{
+      source => "msg"
+    }
+    mutate { add_tag => "Kong" }
+  } else {
+    kv { target => "msgms"
+	 field_split => ","
+         value_split => ":"
+         include_brackets => false
+         trim => "\"\{\}" 
+         trimkey => "\{\}\"" }
+    mutate { add_tag => "Microservice" }
+  }
+  
+}
+output {
+ elasticsearch {
+  hosts => ["marathon-lb.inf.marathon-bsa.mesos:20041"]
+  index => "logstash-%{+YYYY.MM.dd}"
+ }
+ stdout { codec => rubydebug }
+}

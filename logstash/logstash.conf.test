@@ -1,0 +1,8 @@
+input { stdin { } }
+output {
+ elasticsearch {
+  hosts => ["marathon-lb.inf.marathon-bsa.mesos:20041"]
+  index => "logstash-data"
+ }
+ stdout { codec => rubydebug }
+}

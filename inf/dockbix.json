@@ -1,0 +1,63 @@
+{
+  "id": "/inf/dockbix",
+  "cmd": null,
+  "cpus": 0.4,
+  "mem": 512,
+  "disk": 0,
+  "instances": 0,
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/etc/localtime",
+        "hostPath": "/etc/localtime",
+        "mode": "RO"
+      }
+    ],
+    "docker": {
+      "image": "monitoringartist/dockbix-xxl:latest",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 0,
+          "servicePort": 20078,
+          "protocol": "tcp",
+          "labels": {}
+        }
+      ],
+      "privileged": false,
+      "parameters": [],
+      "forcePullImage": true
+    }
+  },
+  "env": {
+    "ZS_DBPassword": "my_password",
+    "XXL_grapher": "true",
+    "ZS_DBHost": "marathon-lb.inf.marathon-bsa.mesos",
+    "XXL_zapix": "true",
+    "ZS_DBPort": "20077",
+    "ZS_DBUser": "zabbix"
+  },
+  "healthChecks": [
+    {
+      "protocol": "TCP",
+      "portIndex": 0,
+      "gracePeriodSeconds": 300,
+      "intervalSeconds": 60,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 3,
+      "ignoreHttp1xx": false
+    }
+  ],
+  "labels": {
+    "HAPROXY_GROUP": "external"
+  },
+  "portDefinitions": [
+    {
+      "port": 20078,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ]
+}

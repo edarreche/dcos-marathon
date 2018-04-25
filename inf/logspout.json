@@ -1,0 +1,61 @@
+{
+  "id": "/inf/logspout",
+  "cmd": " ",
+  "cpus": 0.1,
+  "mem": 128,
+  "disk": 0,
+  "instances": 0,
+  "constraints": [
+    [
+      "hostname",
+      "LIKE",
+      "192.168.74.25"
+    ]
+  ],
+  "container": {
+    "type": "DOCKER",
+    "volumes": [
+      {
+        "containerPath": "/var/run/docker.sock",
+        "hostPath": "/var/run/docker.sock",
+        "mode": "RO"
+      }
+    ],
+    "docker": {
+      "image": "gliderlabs/logspout:latest",
+      "network": "BRIDGE",
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 0,
+          "servicePort": 10000,
+          "protocol": "tcp",
+          "labels": {}
+        }
+      ],
+      "privileged": true,
+      "parameters": [],
+      "forcePullImage": false
+    }
+  },
+  "env": {
+    "EXCLUDE_LABEL": "logspout.exclude",
+    "LOGSPOUT": "ignore",
+    "TAIL": "0",
+    "DEBUG": "true",
+    "SYSLOG_FORMAT": "rfc5424",
+    "ROUTE_URIS": "syslog+tcp://marathon-lb.inf.marathon-bsa.mesos:20043\\\\?filter.labels=tologspout:tru*",
+    "SYSLOG_STRUCTURED_DATA": "tag=logspout",
+    "PORT": "80"
+  },
+  "labels": {
+    "logspout.exclude": "true"
+  },
+  "portDefinitions": [
+    {
+      "port": 10000,
+      "protocol": "tcp",
+      "labels": {}
+    }
+  ]
+}
